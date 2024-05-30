@@ -1,0 +1,10 @@
+1. Single Responsibility Principle (SRP).
+2. Don’t Repeat Yourself (DRY).
+3. Favor Composition over Inheritance (FCoI).
+4. Design for inheritance, or prohibit it.
+5. Achten Sie auf hohe Kohäsion und lose Kopplung.
+6. Differenzieren Sie Datenkapselung von Information Hiding.
+7. Verwenden Sie Schnittstellen zur Entkopplung und Abstraktion.
+8. Testen Sie mit Unit Tests nach dem Test First Prinzip.
+9. Viele kleine Einheiten sind besser als wenige Grosse.
+10. Aussagestarke Namensgebung und formatierter Quellcode.
