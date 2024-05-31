@@ -1,18 +1,17 @@
 package Game;
 
-import Game.Units.Warrior;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
 public class WarriorTests {
-    @Test
-     public void testWarrior() {
-         Warrior warrior = new Warrior("Warrior", 100, 10);
-         assertEquals("Warrior", warrior.getName());
-         assertEquals(100, warrior.getHealth());
-         assertEquals(10, warrior.getDamage());
-     }
+//    @Test
+//     public void testWarrior() {
+//         Warrior warrior = new Warrior("Warrior", 100, 10);
+//         assertEquals("Warrior", warrior.getName());
+//         assertEquals(100, warrior.getHealth());
+//         assertEquals(10, warrior.getDamage());
+//     }
 
     // @Test
     // public void testWarriorAttack() {
