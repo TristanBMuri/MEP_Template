@@ -1,7 +1,7 @@
 package Game.Helpers;
 
-import Game.Units.Damage;
-import Game.Units.Game_Character;
+import Game.Units.UnitHelpers.Damage;
+import Game.Units.UnitHelpers.Game_Character;
 
 public class AttackHandler implements AttackListener{
     @Override

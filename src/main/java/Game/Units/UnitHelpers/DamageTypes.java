@@ -1,9 +1,9 @@
-package Game.Units;
+package Game.Units.UnitHelpers;
 
 public enum DamageTypes {
     PIERCE,
-    SLASH,
-    BLUDGEON,
+    SLASHING,
+    BLUDGEONING,
     FIRE,
     ICE,
     LIGHTNING,

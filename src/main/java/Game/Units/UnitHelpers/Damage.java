@@ -1,4 +1,4 @@
-package Game.Units;
+package Game.Units.UnitHelpers;
 
 public class Damage {
     private final DamageTypes type;

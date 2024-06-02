@@ -1,4 +1,4 @@
-package Game.Units;
+package Game.Units.UnitHelpers;
 
 import java.util.HashMap;
 import java.util.Map;
