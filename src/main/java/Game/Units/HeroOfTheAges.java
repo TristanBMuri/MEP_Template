@@ -3,42 +3,25 @@ package Game.Units;
 import Game.Equipment.EquipmentHelpers.Weapon;
 import Game.Equipment.Excalibur;
 import Game.Helpers.AttackEvent;
-import Game.Units.UnitHelpers.Combat_Unit;
-import Game.Units.UnitHelpers.Damage;
-import Game.Units.UnitHelpers.DamageTypes;
-import Game.Units.UnitHelpers.Resistance;
+import Game.Units.UnitHelpers.*;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class HeroOfTheAges implements Combat_Unit {
-    private int health;
-    private int baseMaxHealth;
-    private int maxHealth;
-    private int baseArmor;
-    private int armor;
-    private int baseAttackDamage;
-    private Map<DamageTypes, Resistance> baseResistances;
-    private Map<DamageTypes, Resistance> resistances;
-    private Map<DamageTypes, Resistance> baseMagicResistance;
-    private Map<DamageTypes, Resistance> magicResistance;
-    private int level;
-    private int experience;
-    private int goldUpkeep;
+    private Stats stats;
     private Weapon equippedWeapon;
     private Weapon baseWeapon;
 
     public HeroOfTheAges() {
-        this.health = 100;
-        this.baseMaxHealth = 100;
-        this.maxHealth = 100;
-        this.baseAttackDamage = 10;
-        this.baseArmor = 10;
-        this.armor = 10;
-        this.level = 1;
-        this.experience = 0;
-        this.goldUpkeep = 0;
-        innitResistances();
+        this.stats = new Stats(
+                100,
+                100,
+                100,
+                null,
+                null,
+                10,
+                0);
         innitEquipment();
     }
 
@@ -54,41 +37,8 @@ public class HeroOfTheAges implements Combat_Unit {
     }
 
     @Override
-    public int getHealth() {
-        if (health > maxHealth) {
-            health = maxHealth;
-        }
-        return health;
-    }
-
-    @Override
-    public void setHealth(int health) {
-        this.health = health;
-    }
-
-    @Override
-    public int getBaseMaxHealth() {
-        return baseMaxHealth;
-    }
-
-    @Override
-    public int getMaxHealth() {
-        return maxHealth;
-    }
-
-    @Override
-    public int getBaseArmor() {
-        return baseArmor;
-    }
-
-    @Override
-    public int getArmor() {
-        return getBaseArmor() + armor;
-    }
-
-    @Override
-    public Map<DamageTypes, Resistance> getMagicResistance() {
-        return magicResistance;
+    public double getHealth() {
+        return stats.getHealth();
     }
 
     @Override
@@ -116,18 +66,38 @@ public class HeroOfTheAges implements Combat_Unit {
         return goldUpkeep;
     }
 
-    @Override
-    public void innitResistances() {
+    private void innitStats(){
+        // Innit stats for the unit
+
         // Innit resistances for the unit
-        baseResistances = new HashMap<>();
+        Map<DamageTypes, Resistance> baseResistances = new HashMap<>();
         for (DamageTypes type : DamageTypes.values()) {
             baseResistances.put(type, new Resistance(type, 30));
         }
 
-        baseMagicResistance = new HashMap<>();
+        Map<DamageTypes, Resistance> baseMagicResistance = new HashMap<>();
         for (DamageTypes type : DamageTypes.values()) {
             baseMagicResistance.put(type, new Resistance(type, 20));
         }
+
+        this.stats = new Stats(
+                100,
+                100,
+                100,
+                10,
+                10,
+                10,
+                // Base resistances
+                baseResistances,
+                // Base magic resistances
+                baseMagicResistance,
+                1,
+                0);
+    }
+
+    @Override
+    public void innitResistances() {
+
     }
 
     @Override

@@ -24,7 +24,7 @@ public interface Combat_Unit {
     void setBaseAttackDamage(int baseAttackDamage);
 
     // Get the current health of the unit
-    int getHealth();
+    double getHealth();
 
     // Set the current health of the unit
     void setHealth(int health);
