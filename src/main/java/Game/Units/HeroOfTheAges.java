@@ -5,30 +5,41 @@ import Game.Equipment.Excalibur;
 import Game.Helpers.AttackEvent;
 import Game.Units.UnitHelpers.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class HeroOfTheAges implements Combat_Unit {
+public class HeroOfTheAges implements Combat_Unit, Equipable {
+    private String name;
     private Stats stats;
     private Weapon equippedWeapon;
     private Weapon baseWeapon;
 
     public HeroOfTheAges() {
-        this.stats = new Stats(
-                100,
-                100,
-                100,
-                null,
-                null,
-                10,
-                0);
+        // Innit the unit
+        this.name = "Bob";
+        innitStats();
         innitEquipment();
     }
 
     @Override
     public void attack(Combat_Unit target) {
         // Attack the target unit
+    }
 
+    @Override
+    public ArrayList<StatModifier> getStatModifiers() {
+        return stats.getStatModifiers();
+    }
+
+    @Override
+    public void addStatModifier(StatModifier statModifier) {
+        stats.addStatModifier(statModifier);
+    }
+
+    @Override
+    public void removeStatModifier(StatModifier statModifier) {
+        stats.removeStatModifier(statModifier);
     }
 
     @Override
@@ -37,8 +48,33 @@ public class HeroOfTheAges implements Combat_Unit {
     }
 
     @Override
+    public int getBaseAttackDamage() {
+        return stats.getBaseAttackDamage();
+    }
+
+    @Override
     public double getHealth() {
         return stats.getHealth();
+    }
+
+    @Override
+    public void setHealth(int health) {
+        stats.setHealth(health);
+    }
+
+    @Override
+    public int getMaxHealth() {
+        return stats.getMaxHealth();
+    }
+
+    @Override
+    public int getArmor() {
+        return stats.getArmor();
+    }
+
+    @Override
+    public Map<DamageTypes, Resistance> getMagicResistance() {
+        return stats.getMagicResistance();
     }
 
     @Override
@@ -53,51 +89,46 @@ public class HeroOfTheAges implements Combat_Unit {
 
     @Override
     public int getLevel() {
-        return level;
+        return stats.getLevel();
     }
 
     @Override
     public int getExperience() {
-        return experience;
+        return stats.getExperience();
     }
 
     @Override
     public int getGoldUpkeep() {
-        return goldUpkeep;
+        return stats.getGoldUpkeep();
     }
 
     private void innitStats(){
         // Innit stats for the unit
+        this.stats = new Stats(
+            100,
+            100,
+            100,
+            10,
+            1,
+            0);
+    }
 
+    @Override
+    public void innitResistances() {
         // Innit resistances for the unit
         Map<DamageTypes, Resistance> baseResistances = new HashMap<>();
         for (DamageTypes type : DamageTypes.values()) {
             baseResistances.put(type, new Resistance(type, 30));
         }
 
+        stats.setBaseResistances(baseResistances);
+
         Map<DamageTypes, Resistance> baseMagicResistance = new HashMap<>();
         for (DamageTypes type : DamageTypes.values()) {
             baseMagicResistance.put(type, new Resistance(type, 20));
         }
 
-        this.stats = new Stats(
-                100,
-                100,
-                100,
-                10,
-                10,
-                10,
-                // Base resistances
-                baseResistances,
-                // Base magic resistances
-                baseMagicResistance,
-                1,
-                0);
-    }
-
-    @Override
-    public void innitResistances() {
-
+        stats.setBaseMagicResistance(baseMagicResistance);
     }
 
     @Override
@@ -129,11 +160,6 @@ public class HeroOfTheAges implements Combat_Unit {
     }
 
     @Override
-    public int getBaseAttackDamage() {
-        return baseAttackDamage;
-    }
-
-    @Override
     public int getAttackDamage() {
         if (hasWeaponEquipped()) {
             return getBaseAttackDamage() + getEquippedWeapon().getDamage();
@@ -144,6 +170,6 @@ public class HeroOfTheAges implements Combat_Unit {
 
     @Override
     public void setBaseAttackDamage(int baseAttackDamage) {
-        this.baseAttackDamage = baseAttackDamage;
+        stats.setBaseAttackDamage(baseAttackDamage);
     }
 }
