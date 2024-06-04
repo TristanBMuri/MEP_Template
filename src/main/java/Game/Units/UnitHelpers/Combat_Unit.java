@@ -1,9 +1,8 @@
 package Game.Units.UnitHelpers;
 
-import Game.Equipment.EquipmentHelpers.Weapon;
 import Game.Helpers.AttackEvent;
-import Game.Units.UnitHelpers.Events.NewModifierEvent;
-import Game.Units.UnitHelpers.Events.NewModifierListener;
+import Game.Units.UnitHelpers.Stats.Resistance;
+import Game.Units.UnitHelpers.Stats.StatModifier;
 
 import java.util.ArrayList;
 import java.util.Map;

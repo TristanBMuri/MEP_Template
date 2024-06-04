@@ -4,6 +4,9 @@ import Game.Equipment.EquipmentHelpers.Weapon;
 import Game.Equipment.Excalibur;
 import Game.Helpers.AttackEvent;
 import Game.Units.UnitHelpers.*;
+import Game.Units.UnitHelpers.Stats.Resistance;
+import Game.Units.UnitHelpers.Stats.StatModifier;
+import Game.Units.UnitHelpers.Stats.Stats;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,6 +23,17 @@ public class HeroOfTheAges implements Combat_Unit, Equipable {
         this.name = "Bob";
         innitStats();
         innitEquipment();
+    }
+
+    public HeroOfTheAges(String name) {
+        // Innit the unit
+        this.name = name;
+        innitStats();
+        innitEquipment();
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Override

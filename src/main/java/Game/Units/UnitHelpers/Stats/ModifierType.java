@@ -1,4 +1,4 @@
-package Game.Units.UnitHelpers;
+package Game.Units.UnitHelpers.Stats;
 
 public enum ModifierType {
     ADDITIVE,

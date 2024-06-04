@@ -1,5 +1,7 @@
 package Game.Units.UnitHelpers;
 
+import Game.Units.UnitHelpers.Stats.Resistance;
+
 import java.util.HashMap;
 import java.util.Map;
 
