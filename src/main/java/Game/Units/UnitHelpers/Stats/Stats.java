@@ -43,8 +43,6 @@ public class Stats {
         updateStats();
     }
 
-
-
     public Stats(int baseMaxHealth, int baseArmor, int baseAttackDamage, int baseMagicDamage, int level, int baseGoldUpkeep, ArrayList<StatModifier> statModifiers) {
         this.baseMaxHealth = baseMaxHealth;
         this.health = baseMaxHealth;
@@ -137,9 +135,9 @@ public class Stats {
         magicResistance = new HashMap<>(baseMagicResistance);
         goldUpkeep = baseGoldUpkeep;
 
-        // Sort modifiers by priority and duration (assuming you add that logic)
-        // statModifiers.sort(Comparator.comparing(StatModifier::getPriority)
-        //    .thenComparing(StatModifier::getDuration).reversed());
+         // Sort modifiers by priority and duration (assuming you add that logic)
+         statModifiers.sort(Comparator.comparing(StatModifier::getPriority)
+            .thenComparing(StatModifier::getDuration).reversed());
 
         // Separate modifiers by type
         List<StatModifier> additiveModifiers = statModifiers.stream()
@@ -163,24 +161,37 @@ public class Stats {
         }
     }
 
+    public void updateStat(ModifierTargets targetStat){
+        ArrayList<StatModifier> targetModifiers = new ArrayList<>();
+
+        targetModifiers = (ArrayList<StatModifier>) statModifiers.stream()
+                .filter(mod -> mod.getModifierTarget() == targetStat)
+                .sorted(Comparator.comparing(StatModifier::getPriority).reversed())
+                .toList();
+
+        for (StatModifier mod : targetModifiers) {
+            applyModifier(mod);
+        }
+    }
+
 
     // Helper method to apply a single modifier
     private void applyModifier(StatModifier mod) {
-        ModifierTargets target = mod.getTarget();
+        ModifierTargets target = mod.getModifierTarget();
         double value = mod.getValue();
         switch (target) {
             case HEALTH:
-                applyModifiers(maxHealth, mod);
-                applyModifiers(health, mod);
+                maxHealth = applyModifiers(maxHealth, mod);
+                health = applyModifiers(health, mod);
                 break;
             case ARMOR:
-                applyModifiers(armor, mod);
+                armor = applyModifiers(armor, mod);
                 break;
             case ATTACK_DAMAGE:
-                applyModifiers(attackDamage, mod);
+                attackDamage = applyModifiers(attackDamage, mod);
                 break;
             case MAGIC_DAMAGE:
-                applyModifiers(magicDamage, mod);
+                magicDamage = applyModifiers(magicDamage, mod);
                 break;
             case RESISTANCE:
                 applyResistanceModifiers(mod, value, resistances);
@@ -191,7 +202,6 @@ public class Stats {
             case GOLD_UPKEEP:
                 applyModifiers(goldUpkeep, mod);
                 break;
-
         }
     }
 
@@ -207,16 +217,21 @@ public class Stats {
         }
     }
 
-    private void applyModifiers(int stat, StatModifier mod) {
+    private int applyModifiers(int stat, StatModifier mod) {
         if (mod.getModifierType() == ModifierType.ADDITIVE) {
-            stat += mod.getValue();
+            return stat += mod.getValue();
         } else {
-            stat *= (1 + mod.getValue()/100);
+            return stat *= (1 + mod.getValue()/100);
         }
     }
 
 
     public void addStatModifier(StatModifier statModifier) {
+        if(!statModifier.isPermanent()){
+            if (statModifier.getDuration() <= 0){
+                throw new IllegalArgumentException("Non Permanent Duration must be greater than 0");
+            }
+        }
         statModifiers.add(statModifier);
         notifyNewModifierListeners(statModifier, true);
     }
@@ -241,9 +256,6 @@ public class Stats {
     }
 
     public int getMaxHealth() {
-        if(maxHealth == 0){
-            return baseMaxHealth;
-        }
         return maxHealth;
     }
 
@@ -291,8 +303,8 @@ public class Stats {
         return armor;
     }
 
-    public int getListenerCount() {
-        return listeners.size();
+    public ArrayList<NewModifierListener> getListeners() {
+        return listeners;
     }
 
     public void addExperience(int experience) {

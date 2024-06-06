@@ -2,8 +2,8 @@ package Game.Units;
 
 import Game.Units.UnitHelpers.DamageTypes;
 import Game.Units.UnitHelpers.Events.NewModifierListener;
-import Game.Units.UnitHelpers.Stats.Resistance;
-import Game.Units.UnitHelpers.Stats.Stats;
+import Game.Units.UnitHelpers.Exceptions.MissingDamageTypeException;
+import Game.Units.UnitHelpers.Stats.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,7 +11,10 @@ import org.junit.jupiter.api.Test;
 import java.util.HashMap;
 import java.util.Map;
 
+import static Game.Units.UnitHelpers.Stats.StatModifier.createStatModifier;
 import static org.junit.jupiter.api.Assertions.*;
+import static Game.Units.UnitHelpers.Stats.StatModifier.*;
+import static Game.Units.UnitHelpers.Stats.TemplateStatModifiers.TemplateStatModifiers.*;
 
 final class StatsTest {
     private Stats stats;
@@ -59,15 +62,16 @@ final class StatsTest {
     void testAddNewModifierListener() {
         NewModifierListener listener = event -> {};
         stats.addNewModifierListener(listener);
-        assertEquals(1, stats.getListenerCount());
+        assertTrue(stats.getListeners().contains(listener));
     }
 
     @Test
     void testRemoveNewModifierListener() {
         NewModifierListener listener = event -> {};
         stats.addNewModifierListener(listener);
+        assertTrue(stats.getListeners().contains(listener));
         stats.removeNewModifierListener(listener);
-        assertEquals(0, stats.getListenerCount());
+        assertFalse(stats.getListeners().contains(listener));
     }
 
     @Test
@@ -85,10 +89,93 @@ final class StatsTest {
     }
 
     @Test
-    void maxHealthIsBaseMaxHealthWhenMaxHealthIsZero() {
-        Stats stats = new Stats(100, 10, 10, 2, 1, 10);
+    void updateStatsWithAdditiveModifierIncreasesStats() {
+        StatModifier additiveModifier = additiveHealthModifier(10);
+        stats.addStatModifier(additiveModifier);
+        stats.updateStats();
+        assertEquals(110, stats.getMaxHealth());
+    }
+
+    @Test
+    void updateStatsWithMultiplicativeModifierIncreasesStats() {
+        StatModifier multiplicativeModifier = multiplicativeArmorModifier(50);
+        stats.addStatModifier(multiplicativeModifier);
+        stats.updateStats();
+        assertEquals(75, stats.getArmor());
+    }
+
+    @Test
+    void updateStatsWithMultipleModifiersAppliesAll() {
+        StatModifier additiveModifier = additiveHealthModifier(10);
+        StatModifier multiplicativeModifier = multiplicativeArmorModifier(50);
+        stats.addStatModifier(additiveModifier);
+        stats.addStatModifier(multiplicativeModifier);
+        stats.updateStats();
+        assertEquals(110, stats.getMaxHealth());
+        assertEquals(75, stats.getArmor());
+    }
+
+    @Test
+    void updateStatsWithExpiredModifierDoesNotApply() {
+        StatModifier expiredModifier
+                = createStatModifier(10, 1,
+                ModifierTargets.HEALTH,
+                ModifierType.ADDITIVE,
+                DamageTypes.SLASHING);
+
+        expiredModifier.setDuration(0);
+        try {
+            stats.addStatModifier(expiredModifier);
+        } catch(IllegalArgumentException e) {
+            System.out.println("Modifier is expired");
+        }
+
+        stats.updateStats();
         assertEquals(100, stats.getMaxHealth());
     }
 
+    @Test
+    void updateStatsWithNoModifiersKeepsBaseValues() {
+        stats.updateStats();
+        assertEquals(100, stats.getMaxHealth());
+        assertEquals(50, stats.getArmor());
+        assertEquals(20, stats.getAttackDamage());
+        assertEquals(30, stats.getMagicDamage());
+    }
 
+    @Test
+    void testAddStatModifier() {
+        StatModifier stm = additiveArmorModifier(10);
+        stats.addStatModifier(stm);
+        assertTrue(stats.getStatModifiers().contains(stm));
+    }
+
+    @Test
+    void testRemoveStatModifier() {
+        StatModifier stm = additiveArmorModifier(10);
+        stats.addStatModifier(stm);
+        assertTrue(stats.getStatModifiers().contains(stm));
+        stats.removeStatModifier(stm);
+        assertFalse(stats.getStatModifiers().contains(stm));
+    }
+
+    @Test
+    void testAdditiveAndMultiplicativeModifiers() {
+        StatModifier stm1 = additiveArmorModifier(10);
+        StatModifier stm2 = multiplicativeArmorModifier(10);
+        stats.addStatModifier(stm1);
+        stats.addStatModifier(stm2);
+        stats.updateStats();
+        assertEquals(66, stats.getArmor());
+    }
+
+    @Test
+    void testAdditiveAndMultiplicativeModifiersWithDifferentTargets() {
+        StatModifier stm1 = additiveArmorModifier(10);
+        StatModifier stm2 = multiplicativeArmorModifier(10);
+        stats.addStatModifier(stm1);
+        stats.addStatModifier(stm2);
+        stats.updateStats();
+        assertEquals(66, stats.getArmor());
+    }
 }

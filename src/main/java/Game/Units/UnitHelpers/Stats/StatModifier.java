@@ -14,32 +14,32 @@ public class StatModifier implements NewTurnListener {
     private final UUID id = UUID.randomUUID();
     private double value;
     private int duration;
-    private ModifierType modifierType;
+    private final ModifierType modifierType;
     private boolean isPermanent;
-    private ModifierTargets target;
+    private ModifierTargets modifierTarget;
     private DamageTypes damageType;
-    private int priority;
+    private int priority = 0;
     private ArrayList<ModifierExpiredListener> listeners = new ArrayList<>();
 
-    private StatModifier(double value, int duration, ModifierTargets target, ModifierType modifierType) {
+    private StatModifier(double value, int duration, ModifierTargets modifierTarget, ModifierType modifierType) {
         this.value = value;
         this.duration = duration;
         this.isPermanent = false;
         this.modifierType = modifierType;
-        this.target = target;
-        priority = 0;
+        setPriority(modifierType);
+        this.modifierTarget = modifierTarget;
     }
 
-    private StatModifier(double value, int duration, ModifierTargets target, ModifierType modifierType, int priority) {
+    private StatModifier(double value, int duration, ModifierTargets modifierTarget, ModifierType modifierType, int priority) {
         this.value = value;
         this.duration = duration;
         this.isPermanent = false;
         this.modifierType = modifierType;
         this.priority = priority;
-        this.target = target;
+        this.modifierTarget = modifierTarget;
     }
 
-    private StatModifier(double value, boolean isPermanent, ModifierTargets target, ModifierType modifierType) {
+    private StatModifier(double value, boolean isPermanent, ModifierTargets modifierTarget, ModifierType modifierType) {
         this.value = value;
         this.isPermanent = isPermanent;
         if (isPermanent) {
@@ -48,38 +48,48 @@ public class StatModifier implements NewTurnListener {
             this.duration = 1;
         }
         this.modifierType = modifierType;
-        this.target = target;
-        priority = 0;
+        setPriority(modifierType);
+        this.modifierTarget = modifierTarget;
     }
 
-    public void createStatModifier(double value, int duration, ModifierTargets target, ModifierType modifierType) throws MissingDamageTypeException {
+    public static StatModifier createStatModifier(double value, int duration, ModifierTargets target, ModifierType modifierType) throws MissingDamageTypeException {
         if (target.equals(ModifierTargets.ATTACK_DAMAGE) ||
                 target.equals((ModifierTargets.RESISTANCE)) || target.equals(ModifierTargets.MAGIC_RESISTANCE)){
             throw new MissingDamageTypeException("Damage type must be specified for this modifier");
         }
-        new StatModifier(value, duration, target, modifierType);
+        return new StatModifier(value, duration, target, modifierType);
     }
 
-    public void createStatModifier(double value, int duration, ModifierTargets target, ModifierType modifierType, DamageTypes damageType) {
-        new StatModifier(value, duration, target, modifierType);
-        this.damageType = damageType;
+    public static StatModifier createStatModifier(double value, int duration, ModifierTargets target, ModifierType modifierType, DamageTypes damageType) {
+        StatModifier stm = new StatModifier(value, duration, target, modifierType);
+        stm.damageType = damageType;
+        return stm;
     }
 
-    public void createStatModifier(double value, int duration, ModifierTargets target, ModifierType modifierType, int priority) {
-        new StatModifier(value, duration, target, modifierType, priority);
+    public static StatModifier createStatModifier(double value, int duration, ModifierTargets target, ModifierType modifierType, int priority) {
+        return new StatModifier(value, duration, target, modifierType, priority);
     }
 
-    public void createPermanentStatModifier(double value, ModifierTargets target, ModifierType modifierType) throws MissingDamageTypeException {
+    public static StatModifier createPermanentStatModifier(double value, ModifierTargets target, ModifierType modifierType) throws MissingDamageTypeException {
         if (target.equals(ModifierTargets.ATTACK_DAMAGE) ||
                 target.equals((ModifierTargets.RESISTANCE)) || target.equals(ModifierTargets.MAGIC_RESISTANCE)){
             throw new MissingDamageTypeException("Damage type must be specified for this modifier");
         }
-        new StatModifier(value, true, target, modifierType);
+        return new StatModifier(value, true, target, modifierType);
     }
 
-    public void createPermanentStatModifier(double value, ModifierTargets target, ModifierType modifierType, DamageTypes damageType) {
-        new StatModifier(value, true, target, modifierType);
-        this.damageType = damageType;
+    public static StatModifier createPermanentStatModifier(double value, ModifierTargets target, ModifierType modifierType, DamageTypes damageType) {
+        StatModifier stm = new StatModifier(value, true, target, modifierType);
+        stm.damageType = damageType;
+        return stm;
+    }
+
+    private void setPriority(ModifierType priority) {
+        if (priority.equals(ModifierType.MULTIPLICATIVE)){
+            this.priority = - 1;
+        } else {
+            this.priority = 10;
+        }
     }
 
     // Methods for adding and removing listeners
@@ -115,8 +125,8 @@ public class StatModifier implements NewTurnListener {
         return modifierType;
     }
 
-    public ModifierTargets getTarget(){
-        return target;
+    public ModifierTargets getModifierTarget(){
+        return modifierTarget;
     }
 
     public DamageTypes getDamageType(){
@@ -124,6 +134,9 @@ public class StatModifier implements NewTurnListener {
     }
 
     public void setDuration(int i) {
+        if (i < 0) {
+            notifyListeners();
+        }
         this.duration = i;
     }
 
@@ -140,5 +153,9 @@ public class StatModifier implements NewTurnListener {
                 notifyListeners();
             }
         }
+    }
+
+    public ArrayList<ModifierExpiredListener> getListeners() {
+        return listeners;
     }
 }
