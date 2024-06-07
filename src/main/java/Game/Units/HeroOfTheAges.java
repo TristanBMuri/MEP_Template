@@ -4,6 +4,7 @@ import Game.Equipment.EquipmentHelpers.Weapon;
 import Game.Equipment.Excalibur;
 import Game.Helpers.AttackEvent;
 import Game.Units.UnitHelpers.*;
+import Game.Units.UnitHelpers.Equipment.EquipmentSlots;
 import Game.Units.UnitHelpers.Stats.Resistance;
 import Game.Units.UnitHelpers.Stats.StatModifier;
 import Game.Units.UnitHelpers.Stats.Stats;
@@ -11,18 +12,24 @@ import Game.Units.UnitHelpers.Stats.Stats;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class HeroOfTheAges implements Combat_Unit, Equipable {
+    private final UUID id = UUID.randomUUID();
     private String name;
     private Stats stats;
     private Weapon equippedWeapon;
     private Weapon baseWeapon;
+    private EquipmentSlots equipmentSlots;
+    private int factionId;
 
-    public HeroOfTheAges() {
+    public HeroOfTheAges(int factionId) {
         // Innit the unit
         this.name = "Bob";
         innitStats();
         innitEquipment();
+        equipmentSlots = EquipmentSlots.getDefaultEquipmentSlots();
+        this.factionId = factionId;
     }
 
     public HeroOfTheAges(String name) {
@@ -30,6 +37,7 @@ public class HeroOfTheAges implements Combat_Unit, Equipable {
         this.name = name;
         innitStats();
         innitEquipment();
+        equipmentSlots = EquipmentSlots.getDefaultEquipmentSlots();
     }
 
     public void setName(String name) {
@@ -37,8 +45,27 @@ public class HeroOfTheAges implements Combat_Unit, Equipable {
     }
 
     @Override
+    public UUID getId() {
+        return id;
+    }
+
+    @Override
     public void attack(Combat_Unit target) {
         // Attack the target unit
+        AttackEvent attack = new AttackEvent(
+                this,
+                target,
+                new Damage(DamageTypes.PHYSICAL, getAttackDamage()));
+    }
+
+    @Override
+    public void takeDamage(AttackEvent attack) {
+        // Take damage from the attacker
+        Damage damage = attack.getDamage();
+        double damageValue = damage.getValue();
+        DamageTypes damageType = damage.getType();
+
+        stats.setHealth((int) (stats.getHealth() - damageValue));
     }
 
     @Override
@@ -57,13 +84,23 @@ public class HeroOfTheAges implements Combat_Unit, Equipable {
     }
 
     @Override
-    public void takeDamage(AttackEvent attack) {
-        // Take damage from the attacker
+    public void onAttackEvent(AttackEvent event) {
+
+    }
+
+    @Override
+    public void onNewTurn() {
+
     }
 
     @Override
     public int getBaseAttackDamage() {
         return stats.getBaseAttackDamage();
+    }
+
+    @Override
+    public int getFactionId() {
+        return this.factionId;
     }
 
     @Override
@@ -123,7 +160,7 @@ public class HeroOfTheAges implements Combat_Unit, Equipable {
             100,
             100,
             10,
-            1,
+            10,
             0);
     }
 
@@ -152,6 +189,11 @@ public class HeroOfTheAges implements Combat_Unit, Equipable {
     }
 
     @Override
+    public String getName() {
+        return this.name;
+    }
+
+    @Override
     public void unequipWeapon() {
         // Unequip a Weapon from the unit
         if (equippedWeapon != null) {
@@ -171,6 +213,12 @@ public class HeroOfTheAges implements Combat_Unit, Equipable {
     public boolean hasWeaponEquipped() {
         // Has Weapon equipped
         return equippedWeapon != null;
+    }
+
+    @Override
+    public EquipmentSlots getEquipmentSlots() {
+        // Get the Equipment slots of the unit
+        return equipmentSlots;
     }
 
     @Override

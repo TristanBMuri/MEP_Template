@@ -1,6 +1,7 @@
 package Game.Units.UnitHelpers;
 
 public enum DamageTypes {
+    PHYSICAL,
     PIERCE,
     SLASHING,
     BLUDGEONING,

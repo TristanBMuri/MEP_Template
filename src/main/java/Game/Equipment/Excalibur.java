@@ -7,6 +7,7 @@ import Game.Units.UnitHelpers.DamageTypes;
 
 public class Excalibur implements Weapon{
     private int damage;
+    private int attackSpeed;
     private int range;
     private EquipmentType type;
     private String name;
@@ -15,6 +16,7 @@ public class Excalibur implements Weapon{
 
     public Excalibur() {
         this.damage = 50;
+        this.attackSpeed = 3;
         this.range = 1;
         this.type = EquipmentType.WEAPON;
         this.name = "Excalibur";
@@ -28,18 +30,23 @@ public class Excalibur implements Weapon{
     }
 
     @Override
+    public int getAttackSpeed() {
+        return this.attackSpeed;
+    }
+
+    @Override
     public int getRange() {
-        return range;
+        return this.range;
     }
 
     @Override
     public EquipmentType getType() {
-        return type;
+        return this.type;
     }
 
     @Override
     public String getName() {
-        return name;
+        return this.name;
     }
 
     @Override

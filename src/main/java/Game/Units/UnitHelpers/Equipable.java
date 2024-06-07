@@ -1,6 +1,7 @@
 package Game.Units.UnitHelpers;
 
 import Game.Equipment.EquipmentHelpers.Weapon;
+import Game.Units.UnitHelpers.Equipment.EquipmentSlots;
 
 public interface Equipable {
     // Try to Equip a Weapon to the unit
@@ -14,4 +15,7 @@ public interface Equipable {
 
     // Has Weapon equipped
     boolean hasWeaponEquipped();
+
+    // Get the Equipment slots of the unit
+    EquipmentSlots getEquipmentSlots();
 }

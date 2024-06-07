@@ -42,4 +42,38 @@ class EquipmentSlotsTest {
         assertTrue(equipmentSlots.isArmorProficient(ArmorType.HEAVY));
         assertFalse(equipmentSlots.isArmorProficient(ArmorType.LIGHT));
     }
+
+    @Test
+    void setAndGetTotalCapacity() {
+        EquipmentSlots equipmentSlots = new EquipmentSlots(1, 1, 1, 1, 1, 1, 1, new WeaponType[]{}, new ArmorType[]{}, 1);
+        equipmentSlots.setTotalCapacity(10);
+        assertEquals(10, equipmentSlots.getTotalCapacity());
+    }
+
+    @Test
+    void setAndGetWeaponProficiency() {
+        EquipmentSlots equipmentSlots = new EquipmentSlots(1, 1, 1, 1, 1, 1, 1, new WeaponType[]{WeaponType.SWORD}, new ArmorType[]{}, 1);
+        equipmentSlots.setWeaponProficiency(new WeaponType[]{WeaponType.AXE});
+        assertTrue(equipmentSlots.isWeaponProficient(WeaponType.AXE));
+        assertFalse(equipmentSlots.isWeaponProficient(WeaponType.SWORD));
+    }
+
+    @Test
+    void setAndGetArmorProficiency() {
+        EquipmentSlots equipmentSlots = new EquipmentSlots(1, 1, 1, 1, 1, 1, 1, new WeaponType[]{}, new ArmorType[]{ArmorType.HEAVY}, 1);
+        equipmentSlots.setArmorProficiency(new ArmorType[]{ArmorType.LIGHT});
+        assertTrue(equipmentSlots.isArmorProficient(ArmorType.LIGHT));
+        assertFalse(equipmentSlots.isArmorProficient(ArmorType.HEAVY));
+    }
+
+    @Test
+    void getDefaultEquipmentSlotsHasCorrectProficiencies() {
+        EquipmentSlots equipmentSlots = EquipmentSlots.getDefaultEquipmentSlots();
+        for (WeaponType type : WeaponType.values()) {
+            assertTrue(equipmentSlots.isWeaponProficient(type));
+        }
+        for (ArmorType type : ArmorType.values()) {
+            assertTrue(equipmentSlots.isArmorProficient(type));
+        }
+    }
 }

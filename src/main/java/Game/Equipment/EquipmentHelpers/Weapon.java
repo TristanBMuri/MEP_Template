@@ -4,6 +4,7 @@ import Game.Units.UnitHelpers.DamageTypes;
 
 public interface Weapon {
     public int getDamage();
+    public int getAttackSpeed();
     public int getRange();
     public EquipmentType getType();
     public WeaponType getWeaponType();

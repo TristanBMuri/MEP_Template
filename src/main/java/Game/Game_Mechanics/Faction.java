@@ -1,18 +1,22 @@
 package Game.Game_Mechanics;
 
+import java.util.UUID;
+
 public class Faction {
-    private final int id;
+    private final UUID id = UUID.randomUUID();
+    private int gameId;
     private String name;
     private final boolean isPlayerFaction;
+    private Army army;
 
-    public Faction(int id, String name, boolean isPlayerFaction) {
-        this.id = id;
+    public Faction(int gameId, String name, boolean isPlayerFaction) {
+        this.gameId = gameId;
         this.name = name;
         this.isPlayerFaction = isPlayerFaction;
     }
 
-    public int getId() {
-        return id;
+    public int getGameId() {
+        return gameId;
     }
 
     public String getName() {
@@ -25,5 +29,13 @@ public class Faction {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setGameId(int gameId) {
+        this.gameId = gameId;
     }
 }

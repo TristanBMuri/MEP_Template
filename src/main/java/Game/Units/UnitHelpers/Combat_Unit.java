@@ -6,10 +6,13 @@ import Game.Units.UnitHelpers.Stats.StatModifier;
 
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.UUID;
 
 // Interfaces for Combat classes
 // It's supposed to have all necessary methods for a Combat Unit
 public interface Combat_Unit {
+    UUID getId();
+
     // Attack the target unit
     void attack(Combat_Unit target);
 
@@ -19,11 +22,17 @@ public interface Combat_Unit {
 
     void removeStatModifier(StatModifier statModifier);
 
+    void onAttackEvent(AttackEvent event);
+
+    void onNewTurn();
+
     // Take damage from the attacker
     void takeDamage(AttackEvent attack);
 
     // Base Attack Damage which is supposed to be added to the weapon damage
     int getBaseAttackDamage();
+
+    int getFactionId();
 
     // Get the current attack damage of the unit
     int getAttackDamage();
@@ -60,6 +69,8 @@ public interface Combat_Unit {
 
     // Innit equipment for the unit
     void innitEquipment();
+
+    String getName();
 
     // To do: void equipArmor(Armor armor);
 

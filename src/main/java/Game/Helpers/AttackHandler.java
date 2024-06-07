@@ -1,13 +1,13 @@
 package Game.Helpers;
 
+import Game.Units.UnitHelpers.Combat_Unit;
 import Game.Units.UnitHelpers.Damage;
-import Game.Units.UnitHelpers.Game_Character;
 
 public class AttackHandler implements AttackListener{
     @Override
     public void onAttackEvent(AttackEvent event) {
-        Game_Character attacker = event.getAttacker();
-        Game_Character defender = event.getDefender();
+        Combat_Unit attacker = event.getAttacker();
+        Combat_Unit defender = event.getDefender();
         Damage damage = event.getDamage();
 
         if (attacker.getFactionId() == defender.getFactionId()) {
@@ -16,7 +16,7 @@ public class AttackHandler implements AttackListener{
             return;
         }
 
-        defender.takeDamage(damage);
+        defender.takeDamage(event);
         System.out.println(attacker.getName() + " attacked " + defender.getName() +
                 " for " + (int) damage.getValue() + " damage!");
     }
